@@ -1,5 +1,6 @@
 This is a tutorial to show how to install Apache Spark and integrate with IPython notebooks in Vagrant. With the release of 4.0>, IPython was deprecated such that Jupyter would be used as the main kernel. However, using Spark on Jupyter is still not straight forward with instructions. 
 
+
 ## Prerequisites 
 - Java (might be difficult to install on Vagrant ubuntu_trusty64, so install Scala)
 - Apache Spark
@@ -7,7 +8,7 @@ This is a tutorial to show how to install Apache Spark and integrate with IPytho
 - IPython == 3.2.1
 - Vagrant 
 
-## Installation 
+## Installation of IPython notebook and connect to host
 1) Install Vagrant on your host computer. We use the trusty64 version of Ubuntu. It is best practice
 to store the Vagrant file in a separate folder (e.g. user/virtual_envs/spark). Run the following commands. 
 ``` bash 
@@ -47,3 +48,12 @@ c.NotebookApp.ip = '*'
 c.NotebookApp.port = 8886
 c.NotebookApp.open_browser = False
 ```
+The follow allows for graphing inline, any IP address is application (e.g. localhost), the port to open is 8886, and to not automatically luanch a browser for an IPython notebook. 
+
+At this point, test if this configuration works with the command 
+``` bash
+sudo ipython notebook --profile=pyspark
+```
+Go to the host browser, and type in 'localhost:8886'
+
+## Installation of Apache Spark 
