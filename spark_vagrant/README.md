@@ -113,5 +113,11 @@ For some people, the startup scripts will not launch in the notebook. Some tips 
 
 2) Copy the structure of profile_pyspark to that of profile_default. 
 
-3) 
+3) Lastly, manually run the script written in 00-pyspark-startup.py
 
+A test to perform when in the notebook is to import sys. Check the paths that sys recongises, it should include
+```
+/usr/local/spark/spark-1.6.1-bin-hadoop2.6/python/lib/py4j-0.9-src.zip',
+ '/usr/local/spark/spark-1.6.1-bin-hadoop2.6/python',
+```
+Sometimes the startup script does not run automatically depending on how ipython is called. If ipython is ran, sometimes Spark will run automatically but with a specific profile it will not run. 
