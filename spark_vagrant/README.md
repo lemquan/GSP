@@ -1,4 +1,4 @@
-This is a tutorial to show how to install Apache Spark and integrate with IPython notebooks in Vagrant. With the release of 4.0>, IPython was deprecated such that Jupyter would be used as the main kernel. However, using Spark on Jupyter is still not straight forward with instructions. 
+This is a tutorial to show how to install Apache Spark and integrate with IPython notebooks in Vagrant. With the release of 4.0>, IPython was deprecated such that Jupyter would be used as the main kernel. However, using Spark on Jupyter is still not straight forward with instructions. These instructions are for a single instance on Vagrant as such we will not be using Hadoop. 
 
 
 ## Prerequisites 
@@ -57,3 +57,61 @@ sudo ipython notebook --profile=pyspark
 Go to the host browser, and type in 'localhost:8886'
 
 ## Installation of Apache Spark 
+1) Vagrant will not include Java. An easy way to get Java is to install Scala which will include Java.
+``` bash
+wget http://downloads.lightbend.com/scala/2.11.1/scala-2.11.7.deb # can skip unless you want a specific version of Scala
+sudo dpkg -i scala-2.11.7.deb                                     # installing specific version of Scala 
+sudo apt-get update 
+sudo apt-get install scala 
+```
+
+2) Install Spark. Be sure to select the option to include Pre-Built Hadoop 2.6. This saves us time from compiling Hadoop with sbt or Maven as the files are ready for use. 
+``` bash
+wget http://www.apache.org/dyn/closer.lua/spark/spark-1.6.1/spark-1.6.1-bin-hadoop2.6.tgz
+tar -zxvf spark-1.6.1-bin-hadoop2.6.tgz -C /usr/local/spark 
+```
+
+Add Scala and Spark to .bashrc. Usually, the package will install the SCALA_HOME environment. If not, doing the following:
+``` bash
+export SCALA_HOME=/usr/local/src/scala/scala-2.11.7
+export SPARK_HOME=/usr/local/spark/spark-1.6.1-bin-hadoop2.6
+export PATH=$PATH:$SCALA_HOME/bin:$SPARK_HOME
+```
+Include the changes by exiting Vagrant or call 
+```bash
+source .bashrc
+```
+
+Verify that Scala and Spark works,
+```bash
+scala -version
+cd $SPARK_HOME
+./bin/spark-shell
+```
+
+## Using Spark with IPython
+In this section, we will enable Spark on IPython notebooks. This process is simple, but it might not always work. 
+Go to the ~/.ipython/profile_pyspark/startup. The startup folder initiates any scripts needed to run upon startup of the notebook. *Sometimes this will not work.* But we will include it anyways as it might work for you. 
+``` python
+import os
+import sys
+
+spark_home = os.environ.get('SPARK_HOME', None)
+if not spark_home:
+      raise ValueError('SPARK_HOME environment variable is not set')
+sys.path.insert(0, spark_home +'/python')
+sys.path.insert(0, os.path.join(spark_home, 'python/lib/py4j-0.9-src.zip')) #be sure this is the correct version in Hadoop
+execfile(os.path.join(spark_home, 'python/pyspark/shell.py'))
+```
+At this point, you should be able to launch IPython notebook as above. 
+Go to the host browser, and type in 'localhost:8886'. In the notebook, import pyspark to test if Spark works. 
+
+## Spark does not work in IPython
+For some people, the startup scripts will not launch in the notebook. Some tips that may remedy:
+
+1) Check if Spark launches by typing ipython in the terminal. The Spark prompt should populate. This means that the envs have been set properly. 
+
+2) Copy the structure of profile_pyspark to that of profile_default. 
+
+3) 
+
